@@ -112,6 +112,10 @@ _How many attraction had more than 1 million visitors in 2022?_
 #visitors %>% 
 #  filter(____) %>%
 #  count()
+visitors %>%
+  filter(n_2022 > 1000000) %>%
+  count()
+
 ```
 
 ## Question 5
@@ -153,7 +157,8 @@ _How many regions have more than 50 tourist attraction in the data set? (Hint: Y
 #  _____(region) %>%
 #  filter(______)
 visitors %>%
-  
+  count(region) %>%
+  filter(n > 50)
 ```
 
 
@@ -183,6 +188,11 @@ _Perform the same calculation for the 2021 admissions data._
 #    __________,
 #    __________
 #  )
+visitors %>%
+  summarise(
+    mean_2021 = mean(n_2021,na.rm = TRUE),
+    med_2021 = median(n_2021,na.rm = TRUE)
+  )
 ```
 
 All values in the output are `NA`!
@@ -192,7 +202,8 @@ All values in the output are `NA`!
 _What does `NA` stand for and why are you getting this as your answer to the previous question._
 
 **Write your answer here**
-
+NA means date are not available
+I written the incorrect form mean(admission) and did not select the TRUE data 
 
 
 
@@ -202,7 +213,7 @@ _Look at the help pages for the `mean()` and `median()` commands to see what the
 
 **Write your answer here**
 
-
+It removes all the data that are not available .
 
 
 ## Question 7
@@ -223,6 +234,7 @@ visitors %>%
 _Observe in question 6 that the mean statistics across all settings are much larger than the corresponding median statistics. Discuss in your group what this suggests about the data._
 
 **Write your answer here**
+There are some values that are very large 
 
 ## Question 8
 
@@ -262,10 +274,12 @@ visitors_with_nations %>%
 
 _How many tourist attractions are there in each of the 4 nations? From this, discuss in your group how reliable you think the inter-quartile estimates are._
 
-
+The inter-quartile estimates gets more reliable when the sample size increases , IQE is easily to be affected by the several extreme value , which makes the IQR less reliable .
 ```{r Ex_l}
 #________ %>%
 #  ______(_______)
+visitors_with_nations %>%
+  count(nation)
 ```
 
 
@@ -279,6 +293,12 @@ _Within each of the 4 nations, what is the proportion of tourist attractions tha
 ```{r Ex_m}
 # Write your code here
 
+visitors_with_nations %>%
+  group_by(nation,admission) %>%
+  count() %>%
+  group_by(nation) %>%
+  mutate(total_in_nation = sum(n),precentage = n/total_in_nation * 100) %>%
+filter(admission == "Free")
 
 ```
 
@@ -289,7 +309,17 @@ _Calculate the percentage change in visitor admissions from 2021 to 2022. Of the
 
 ```{r Ex_n}
 # Write your code here
+visitors %>%
+  filter(region == "Scotland") %>%
+  mutate(percentage_change = (n_2022 - n_2021)/n_2021 * 100,na.rm = TRUE)%>%
+  group_by(admission) %>%
+  summarise(mean_percentage_change = mean(percentage_change,na.rm = TRUE)) %>%
+  arrange(mean_percentage_change) 
 
+
+
+  
+  
 
 
 ```
